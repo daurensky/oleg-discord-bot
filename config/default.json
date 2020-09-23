@@ -1,5 +1,7 @@
 {
   "defaultRole": "герой",
   "mainChannel": "главная",
-  "testChannel": "тестовый"
+  "testChannel": "тестовый",
+  "bot_id": "705503377169186836",
+  "sign": "-"
 }
