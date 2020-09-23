@@ -28,11 +28,11 @@ client.on("guildMemberAdd", async (member) => {
 client.on("message", (msg) => {
   const message = (text) => msg.content.toLowerCase() === text
 
-  if (message(`пошел нахуй расул`)) {
+  if (message("пошел нахуй расул")) {
     msg.channel.send("да, пошел нахуй")
   }
 
-  if (message(`хорошая работа олег`)) {
+  if (message("хорошая работа олег")) {
     msg.channel.send("<:ez:744200683363893398>")
   }
 })
@@ -51,12 +51,12 @@ client.on("message", (msg) => {
     }
 
     // flip
-    if (command`flip`) {
+    if (command("flip")) {
       msg.channel.send(doFlip(msg))
     }
 
     // help
-    if (command`help`) {
+    if (command("help")) {
       msg.channel.send(helpList())
     }
   }
@@ -66,11 +66,11 @@ client.on("message", (msg) => {
 client.on("message", async (msg) => {
   const message = (text) => msg.content.toLowerCase() === text
 
-  if (message`test.hello`) {
+  if (message("test.hello")) {
     createWelcomeMessage(msg.member, config.get("testChannel").toLowerCase())
   }
 
-  if (message`test.addrole`) {
+  if (message("test.addrole")) {
     addDefaultRole(msg.member)
       .then(() => {
         message.channel.send("стандартная роль добавляется")
