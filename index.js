@@ -73,10 +73,10 @@ client.on("message", async (msg) => {
   if (message("test.addrole")) {
     addDefaultRole(msg.member)
       .then(() => {
-        message.channel.send("стандартная роль добавляется")
+        msg.channel.send("стандартная роль добавляется")
       })
       .catch(() => {
-        message.channel.send("неверное название роли в конфиге")
+        msg.channel.send("неверное название роли в конфиге")
       })
   }
 })
