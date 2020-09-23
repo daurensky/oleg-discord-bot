@@ -28,11 +28,11 @@ client.on("guildMemberAdd", async (member) => {
 client.on("message", (msg) => {
   const message = (text) => msg.content.toLowerCase() === text
 
-  if (message`пошел нахуй расул`) {
+  if (message(`пошел нахуй расул`)) {
     msg.channel.send("да, пошел нахуй")
   }
 
-  if (message`хорошая работа олег`) {
+  if (message(`хорошая работа олег`)) {
     msg.channel.send("<:ez:744200683363893398>")
   }
 })
