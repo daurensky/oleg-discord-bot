@@ -8,8 +8,12 @@ const doRoll = require("./lib/doRoll")
 const doFlip = require("./lib/doFlip")
 const helpList = require("./lib/helpList")
 const TextCommand = require("./lib/textCommand")
+const play = require("./lib/playMusic")
+const tracklist = require("./lib/tracklist")
+const skipTrack = require("./lib/skipTrack")
 
 const client = new Discord.Client()
+const queue = new Map()
 
 client.login(token)
 
@@ -50,53 +54,78 @@ client.on("message", (msg) => {
 client.on("message", async (msg) => {
   const sended = new TextCommand(msg)
 
-  if (!sended.isBot) {
-    // roll
-    if (sended.inMessage(sended.sign + "roll")) {
-      msg.channel.send(doRoll(msg))
-    }
+  if (sended.isBot) return
 
-    // flip
-    if (sended.command("flip")) {
-      msg.channel.send(doFlip(msg))
-    }
+  const serverQueue = queue.get(msg.guild.id)
 
-    // help
-    if (sended.command("help")) {
-      msg.channel.send(helpList())
-    }
-
-    // join
-    sended.voiceCommand("join", () => {
-      msg.channel.send("запрыгиваю в канал")
-      sended.voiceChannel.join()
-    })
-
-    // play
-    sended.voiceCommand("play", async () => {
-      const connection = await sended.voiceChannel.join()
-
-      const dispatcher = connection.play("audio.mp3")
-
-      dispatcher.on("start", () => {
-        msg.channel.send("включаю свою песню")
-      })
-
-      dispatcher.on("finish", () => {
-        msg.channel.send("конец песни")
-      })
-
-      dispatcher.setVolume(0.7)
-
-      dispatcher.on("error", console.error)
-    })
-
-    // leave
-    sended.voiceCommand("leave", () => {
-      msg.channel.send("выпрыгиваю из канала")
-      sended.voiceChannel.leave()
-    })
+  // roll
+  if (sended.inMessage(sended.sign + "roll")) {
+    msg.channel.send(doRoll(msg))
   }
+
+  // flip
+  if (sended.command("flip")) {
+    msg.channel.send(doFlip(msg))
+  }
+
+  // help
+  if (sended.command("help")) {
+    msg.channel.send(helpList())
+  }
+
+  // join
+  sended.voiceCommand("join", () => {
+    msg.channel.send("запрыгиваю в канал")
+    sended.voiceChannel.join()
+  })
+
+  // play
+  sended.voiceCommand("play", () => {
+    play(msg, sended.voiceChannel, queue)
+  })
+
+  // pause
+  sended.voiceCommand("pause", () => {
+    msg.channel.send("песня приостановлена")
+    serverQueue.connection.dispatcher.pause()
+  })
+
+  // volume
+  sended.voiceCommand("volume", () => {
+    const volume = msg.content.split(" ")[1]
+
+    msg.channel.send(`громкость изменена на ${volume}`)
+    serverQueue.connection.dispatcher.setVolume(volume)
+  })
+
+  // resume
+  sended.voiceCommand("resume", () => {
+    msg.channel.send("песня возобновлена")
+    serverQueue.connection.dispatcher.resume()
+  })
+
+  // skip
+  sended.voiceCommand("skip", () => {
+    skipTrack(msg, serverQueue)
+  })
+
+  // tracklist
+  sended.voiceCommand("tracklist", () => {
+    tracklist(msg, serverQueue)
+  })
+
+  // stop
+  sended.voiceCommand("stop", () => {
+    msg.channel.send("остановлено")
+    serverQueue.songs = []
+    serverQueue.connection.dispatcher.end()
+  })
+
+  // leave
+  sended.voiceCommand("leave", () => {
+    msg.channel.send("выпрыгиваю из канала")
+    sended.voiceChannel.leave()
+  })
 })
 
 // TEST MESSAGES (need to check action functions)
